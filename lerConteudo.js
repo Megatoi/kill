@@ -1,11 +1,14 @@
 const readLine = require('readline-sync')
-
+const robots = {
+    texto: require('./robots/texto.js')
+}
 function comecar() {
 
     const content = {}
     content.tema = escutar_termo()
     content.prefixo = escutar_prefixo()
-
+    robots.texto(content)
+    
     function escutar_termo() {
          return readLine.question('Qual termo voce deseja procurar em WIkiPedia? ')
      }
