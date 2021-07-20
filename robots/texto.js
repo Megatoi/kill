@@ -9,7 +9,10 @@ const robot = async (content) => {
     async function baixarConteudoWikipedia(content){
         const algorithimiaAutentic = algorithmia(apiKey)
         const wikipediaAlgorithn = algorithimiaAutentic.algo('web/WikipediaParser/0.1.2')
-        const wikipediaResponse = await wikipediaAlgorithn.pipe(content.tema)
+        const wikipediaResponse = await wikipediaAlgorithn.pipe({
+            "lang": content.lang,
+            "articleName": content.tema
+        })
         const conteudo = wikipediaResponse.get()
         content.sourceContentOriginal = conteudo.content
 

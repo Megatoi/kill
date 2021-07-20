@@ -7,6 +7,8 @@ async function comecar() {
     const content = {}
     content.tema = escutar_termo()
     content.prefixo = escutar_prefixo()
+    content.lang = escolher_idioma()
+
     await robots.texto(content)
 
     function escutar_termo() {
@@ -22,7 +24,13 @@ async function comecar() {
         return texto_guardado_no_indice
      }
     
-   
+    function escolher_idioma() {
+        let idiomas = ['pt', 'en']
+        let indice_escolhido = readLine.keyInSelect(idiomas)
+        let texto_guardado_no_indice2 = idiomas[indice_escolhido]
+
+        return texto_guardado_no_indice2
+    }
 }
 
 comecar()
