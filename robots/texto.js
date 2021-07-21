@@ -3,6 +3,7 @@ const apiKey_wattson = require('../credenciais/wattson.json')
 const naturalLAnguageUnderstanding = require('watson-developer-cloud/natural-language-understanding/v1.js')
 const apiKey = require('../credenciais/algorithmia.json').apiKey
 const sentecesDetect = require('sbd')
+const state = require('./loader.js')
 
 var nlu = new naturalLAnguageUnderstanding({
     iam_apikey: apiKey_wattson.apikey,
@@ -10,13 +11,29 @@ var nlu = new naturalLAnguageUnderstanding({
     url: apiKey_wattson.url
 })
 
-const robot = async (content) => {
+const robot = async () => {
+   
+   const content = await state.load()
+   console.clear()
+   console.log('Conteudo Carregado')
 
    await baixarConteudoWikipedia(content)
-   content.sourceContentLimpo = conteudoLimpo(content.sourceContentOriginal)
-   separarEmSetences(content)
-   pegarMAximoDesetences()
+    console.log('Conteudo Baixado')
+
+   content.sourceContentLimpo = await conteudoLimpo(content.sourceContentOriginal)
+    console.log('Conteudo limpo')
+
+   await separarEmSetences(content)
+    console.log('Conteudo separado em setences')
+
+   await pegarMAximoDesetences()
+    console.log('Maximo de setences em' + content.numeroMAximoSetensas)
+
    await injetarKeywords(content)
+    console.log('Keyword injetada')
+
+   state.save(content)
+    console.log('SUCCESSss')
 
     async function baixarConteudoWikipedia(content){
         const algorithimiaAutentic = algorithmia(apiKey)
@@ -87,7 +104,7 @@ const robot = async (content) => {
             setence.keyworld = await palaras_chaves(setence.text)
         }
     }
-    console.log(JSON.stringify(content.senteces, null, 4))
+    
 }
 
 module.exports = robot 
