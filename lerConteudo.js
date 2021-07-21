@@ -4,7 +4,9 @@ const robots = {
 }
 async function comecar() {
 
-    const content = {}
+    const content = {
+        numeroMAximoSetensas: 7
+    }
     content.tema = escutar_termo()
     content.prefixo = escutar_prefixo()
     content.lang = escolher_idioma()

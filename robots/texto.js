@@ -1,10 +1,22 @@
-const algorithmia = require('algorithmia');
+const algorithmia = require('algorithmia')
+const apiKey_wattson = require('../credenciais/wattson.json')
+const naturalLAnguageUnderstanding = require('watson-developer-cloud/natural-language-understanding/v1.js')
 const apiKey = require('../credenciais/algorithmia.json').apiKey
 const sentecesDetect = require('sbd')
+
+var nlu = new naturalLAnguageUnderstanding({
+    iam_apikey: apiKey_wattson.apikey,
+    version: '2018-04-05',
+    url: apiKey_wattson.url
+})
+
 const robot = async (content) => {
+
    await baixarConteudoWikipedia(content)
    content.sourceContentLimpo = conteudoLimpo(content.sourceContentOriginal)
    separarEmSetences(content)
+   pegarMAximoDesetences()
+   await injetarKeywords(content)
 
     async function baixarConteudoWikipedia(content){
         const algorithimiaAutentic = algorithmia(apiKey)
@@ -15,7 +27,6 @@ const robot = async (content) => {
         })
         const conteudo = wikipediaResponse.get()
         content.sourceContentOriginal = conteudo.content
-
     }
 
     function conteudoLimpo(content) {
@@ -48,9 +59,35 @@ const robot = async (content) => {
           })
         })
     }
-    
-    console.log(content)
-    
+
+
+   async function palaras_chaves(setences) {
+    return new Promise((resolve, reject) => {
+        nlu.analyze({
+            text: setences,
+            features: {
+                "keywords": {}
+            }
+        }, (err, response) => {
+            if(err) { throw err }
+            const keywords = response.keywords.map((keyword) => {
+              return keyword.text
+            })
+            return resolve(keywords)
+        })
+    }
+ )}
+
+    function pegarMAximoDesetences() {
+        content.senteces = content.senteces.slice(0, content.numeroMAximoSetensas)
+    }
+
+    async function injetarKeywords(content) {
+        for(const setence of content.senteces) {
+            setence.keyworld = await palaras_chaves(setence.text)
+        }
+    }
+    console.log(JSON.stringify(content.senteces, null, 4))
 }
 
 module.exports = robot 
