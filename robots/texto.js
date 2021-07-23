@@ -12,7 +12,8 @@ var nlu = new naturalLAnguageUnderstanding({
 })
 
 const robot = async () => {
-   
+
+    
    const content = await state.load()
    console.clear()
    console.log('Conteudo Carregado')
@@ -27,7 +28,7 @@ const robot = async () => {
     console.log('Conteudo separado em setences')
 
    await pegarMAximoDesetences()
-    console.log('Maximo de setences em' + content.numeroMAximoSetensas)
+    console.log('Maximo de setences em ' + content.numeroMAximoSetensas)
 
    await injetarKeywords(content)
     console.log('Keyword injetada')
@@ -104,7 +105,6 @@ const robot = async () => {
             setence.keyworld = await palaras_chaves(setence.text)
         }
     }
-    
 }
 
 module.exports = robot 

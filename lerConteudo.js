@@ -2,16 +2,17 @@ const robots = {
     texto: require('./robots/texto.js'),
     input: require('./robots/input.js'),
     archiveSave: require('./robots/loader.js'),
-    images: require('./robots/image.js')
+    images: require('./robots/image.js'),
+    video: require('./robots/video.js')
 }
 
 async function comecar() {
-    
-    const content = await robots.archiveSave.load()
-    // robots.input()
+    robots.input()
 
-    // await robots.texto()
+    await robots.texto()
+    console.log('Injetando o link das imagens correspondentes ao tema')
     await robots.images()
+    // await robots.video()
 }
 
 comecar()
