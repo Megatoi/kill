@@ -6,12 +6,12 @@ const robots = {
 }
 
 async function comecar() {
-    robots.input()
+    // robots.input()
 
-    await robots.texto()
-    console.log('Injetando o link das imagens correspondentes ao tema')
-    await robots.images()
-    // await robots.video()
+    // await robots.texto()
+    // console.log('Injetando o link das imagens correspondentes ao tema')
+    // await robots.images()
+     await robots.video()
 }
 
 comecar()
