@@ -4,6 +4,10 @@ const naturalLAnguageUnderstanding = require('watson-developer-cloud/natural-lan
 const apiKey = require('../credenciais/algorithmia.json').apiKey
 const sentecesDetect = require('sbd')
 const state = require('./loader.js')
+const ora = require('ora')
+const chalk = require('chalk')
+
+
 
 var nlu = new naturalLAnguageUnderstanding({
     iam_apikey: apiKey_wattson.apikey,
@@ -16,25 +20,38 @@ const robot = async () => {
     
    const content = await state.load()
    console.clear()
-   console.log('Conteudo Carregado')
+   ora().succeed('Conteudo carregado')
 
+   var spin1 = ora('Baixando conteudo pela wikipedia').start()
    await baixarConteudoWikipedia(content)
-    console.log('Conteudo Baixado')
+   spin1.succeed('Conteudo baixado com sucesso') 
 
+   var spin2 = ora('Lipando conteudo').start()
    content.sourceContentLimpo = await conteudoLimpo(content.sourceContentOriginal)
-    console.log('Conteudo limpo')
+   await timer(2500)
+   spin2.succeed('Conteudo limpo')
 
+   var spin3 = ora('Separando texto coletado em setenças').start()
    await separarEmSetences(content)
-    console.log('Conteudo separado em setences')
+   await timer(2500)
+   spin3.succeed('Texto separado com sucesso')
 
+   var spin4 = ora('Pegando as primeiras ' + content.numeroMAximoSetensas + ' setenças').start()
    await pegarMAximoDesetences()
-    console.log('Maximo de setences em ' + content.numeroMAximoSetensas)
+   await timer(2500)
+   spin4.succeed('Setenças coletadas')
 
+   var spin5 = ora('Injetando palavras chaves coletadas do texto').start()
    await injetarKeywords(content)
-    console.log('Keyword injetada')
+   await timer(2500)
+   spin5.succeed('Keywords injetadas')
 
+   var spin6 = ora('Salvando alterações...').start()
    state.save(content)
-    console.log('SUCCESSss')
+   await timer(4000)
+   spin6.succeed('Salvo!')
+
+
 
     async function baixarConteudoWikipedia(content){
         const algorithimiaAutentic = algorithmia(apiKey)
@@ -104,6 +121,10 @@ const robot = async () => {
         for(const setence of content.senteces) {
             setence.keyworld = await palaras_chaves(setence.text)
         }
+    }
+
+    async function timer(time) {
+        return new Promise((resolve, reject) => { setTimeout(resolve, time) }) 
     }
 }
 

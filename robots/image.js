@@ -1,6 +1,10 @@
 const image_search = require('g-i-s')
 const state = require('./loader.js')
 const image_download = require('image-downloader')
+const ora = require('ora')
+const chalk = require('chalk')
+
+
 async function search(query) {
     
     const content = await state.load()
@@ -14,7 +18,12 @@ async function search(query) {
             const query = `${tema} ${setece.keyworld[0]}`
             let links = await buscarImagens(query)
             setece.images = links.slice(0, 3)
-            console.log(setece)
+            console.log(`
+            ${chalk.green(`texto: ${chalk.blue(`[ ${setece.text} ]` )}`)} 
+            ${chalk.green(`keyworld: ${chalk.blue(`[ ${setece.keyworld}]` )}`)}
+            ${chalk.green(`images: ${chalk.blue(`[ ${setece.images} ]` )}`)}
+            `)
+            await timer(1500)
         }
      }
 
@@ -44,10 +53,10 @@ async function search(query) {
 
                     await downloadImage(imageurl, `${senteceIndex}-original.png`)
                     content.downloadedImages.push(imageurl)
-                    console.log(`[${senteceIndex}][${imageIndex}] > Imagem baixada com sucesso: ${imageurl}`)    
+                    ora().succeed(`[${senteceIndex}][${imageIndex}] > ${chalk.green(`Imagem baixada com sucesso: ${imageurl}`) }`)
                     break
                 } catch (e) {
-                    console.log(`[${senteceIndex}][${imageIndex}] Erro ao baixar imagem ${imageurl} ${e}`)
+                    ora().fail(`[${senteceIndex}][${imageIndex}] ${chalk.red(`Erro ao baixar imagem ${imageurl} ${e}`)}`)
                 }
               
               }
@@ -58,7 +67,11 @@ async function search(query) {
                url: url,
                dest: `./robots/imagens/${destName}`
            })
-       }        
+       }
+
+       async function timer(time) {
+           return new Promise((resolve) => { setTimeout(resolve, time) })
+       }
 }
 
 module.exports = search 

@@ -1,7 +1,6 @@
 const robots = {
     texto: require('./robots/texto.js'),
     input: require('./robots/input.js'),
-    archiveSave: require('./robots/loader.js'),
     images: require('./robots/image.js'),
     video: require('./robots/video.js')
 }
